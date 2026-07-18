@@ -3,6 +3,8 @@
 > An AI-powered multimodal customer support chatbot developed in collaboration with **Swisscom** as part of the **B.Sc. Artificial Intelligence** curriculum.
 
 ![Basic Image](demo_images/Basic.png)
+![Basic Images](demo_images/Basic2.png)
+![Webrtc](demo_images/webrtc.png)
 
 ## 📖 Overview
 
@@ -126,7 +128,8 @@ The avatar responds with a sympathetic facial expression while delivering the ge
 
 This creates a much more engaging and human-like interaction compared to traditional customer support chatbots.
 
----
+![Happy](demo_images/happy.png)
+![Sad](demo_images/sad.png)
 
 # 🎙️ Speech Processing Journey
 
@@ -158,10 +161,6 @@ Swisscom-AI-Chatbot
 ├── requirements.txt
 └── README.md
 
-# 🎥 Demo
-
-A demonstration video of the chatbot
-
 # 💻 My Contribution
 
 My primary contribution to this project focused on the **speech interaction system**.
@@ -175,7 +174,6 @@ Responsibilities included:
 - Optimizing real-time audio processing
 - Improving the responsiveness of voice conversations
 
----
 
 # 🚀 Future Improvements
 
