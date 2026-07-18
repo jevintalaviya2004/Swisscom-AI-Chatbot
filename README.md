@@ -12,11 +12,11 @@ This project was developed during our **Artificial Intelligence Project** course
 
 Unlike traditional chatbots, this system provides a more human-like interaction by combining:
 
-- 🎤 Real-time voice conversations
-- 🤖 AI-generated responses
-- 📚 Retrieval-Augmented Generation (RAG)
-- 😊 Emotion-aware avatar animations
-- 📞 Customer care handoff through WebRTC
+- Real-time voice conversations
+- AI-generated responses
+- Retrieval-Augmented Generation (RAG)
+- Emotion-aware avatar animations
+- Customer care handoff through WebRTC
 
 The goal was to create a customer support assistant capable of answering common questions about Swisscom's products and services while providing a natural conversational experience.
 
@@ -24,17 +24,17 @@ The goal was to create a customer support assistant capable of answering common 
 
 # ✨ Features
 
-- 🎤 Speech-to-Text conversation
-- 🔊 AI-generated voice responses
-- 💬 Natural language conversations
-- 📚 Retrieval-Augmented Generation (RAG)
-- 🤖 Interactive 3D avatar
-- 😊 Emotion-based avatar expressions
-- ⚡ Real-time communication using WebSockets
-- 📞 Customer support connection via WebRTC
-- 📖 Company knowledge base search using FAISS
-- 🧠 Context-aware AI responses
-- 💡 Modern web interface
+- Speech-to-Text conversation
+- AI-generated voice responses
+- Natural language conversations
+- Retrieval-Augmented Generation (RAG)
+- Interactive 3D avatar
+- Emotion-based avatar expressions
+- Real-time communication using WebSockets
+- Customer support connection via WebRTC
+- Company knowledge base search using FAISS
+- Context-aware AI responses
+- Modern web interface
 
 ---
 
@@ -64,16 +64,13 @@ The goal was to create a customer support assistant capable of answering common 
       Text-to-Speech (Deepgram)
                   │
                   ▼
-      😊 Emotion Detection
+         Emotion Detection
                   │
                   ▼
           3D Avatar Animation
                   │
                   ▼
            🔊 Voice Output
-```
-
----
 
 # 🚀 Technologies Used
 
@@ -115,11 +112,11 @@ Instead of simply displaying text, the chatbot includes an expressive 3D avatar 
 
 Example emotions include:
 
-- 😊 Happy
-- 😢 Sad
-- 😂 Laughing
-- 😐 Neutral
-- 😮 Surprised
+- Happy
+- Sad
+- Laughing
+- Neutral
+- Surprised
 
 For example:
 
@@ -164,13 +161,6 @@ Swisscom-AI-Chatbot
 # 🎥 Demo
 
 A demonstration video of the chatbot.
-
-> 📹 **Demo Video:** *(Coming Soon)*
-
-You can later replace this section with:
-
-```markdown
-## 🎥 Demo
 
 
 # 💻 My Contribution
