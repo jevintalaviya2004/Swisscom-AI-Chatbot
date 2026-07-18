@@ -2,7 +2,7 @@
 
 > An AI-powered multimodal customer support chatbot developed in collaboration with **Swisscom** as part of the **B.Sc. Artificial Intelligence** curriculum.
 
----
+(demo_images/basic.png)
 
 ## 📖 Overview
 
