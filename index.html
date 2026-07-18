@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Voice Avatar Chatbot</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      width: 100vw;
+      font-family: "Segoe UI", sans-serif;
+      background: #574e4e;
+      color: #2D3439;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      display: flex;
+      height: 90vh;
+      width: 90vw;
+      max-width: 1400px;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(225, 228, 232, 0.5);
+      overflow: hidden;
+    }
+
+    #avatar {
+      flex: 1 1 0;
+      height: 100%;
+      background: url('/static/Swisscom.jpg') center center / cover no-repeat;
+    }
+
+
+    .chat-section {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      background: #f5f5f5;
+      height: 100%;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      padding-right: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-size: 15px;
+      max-width: 100%;
+      background: #e0e0e0;
+      color: #000;
+    }
+
+    .assistant {
+      align-self: flex-start;
+      background-color: #dbe4ff;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #ffe2e2;
+    }
+
+    .system {
+      align-self: center;
+      background-color: #fff3cd;
+      color: #856404;
+      text-align: center;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .record-btn,
+    .human-btn,
+    .video-btn {
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .record-btn {
+      background: #333;
+      color: white;
+    }
+
+    .human-btn {
+      background: #28a745;
+      color: white;
+    }
+
+    .video-btn {
+      background: #007bff;
+      color: white;
+    }
+
+    .record-btn:disabled,
+    .human-btn:disabled,
+    .video-btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      margin-left: 10px;
+      border: 2px solid white;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .video-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .video-container.active {
+      display: flex;
+    }
+
+    .video-grid {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .video-box {
+      background: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .local-video {
+      width: 300px;
+      height: 225px;
+    }
+
+    .remote-video {
+      width: 600px;
+      height: 450px;
+    }
+
+    .video-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-label {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+    }
+
+    .video-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .video-controls button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .end-call {
+      background: #dc3545;
+      color: white;
+    }
+
+    .toggle-video,
+    .toggle-audio {
+      background: #6c757d;
+      color: white;
+    }
+
+    .connection-status {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .connecting {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .connected {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .disconnected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js/+esm",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+        "talkinghead": "https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@1.5/modules/talkinghead.mjs"
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <div id="avatar"></div>
+
+    <div class="chat-section">
+      <div class="messages" id="messages"></div>
+      <div class="controls">
+        <button id="recordBtn" class="record-btn">🎙️ Start</button>
+        <button id="humanBtn" class="human-btn" style="display: none;">👥 Connect to Human</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Call Container (unchanged) -->
+  <div class="video-container" id="videoContainer">
+    <div class="connection-status" id="connectionStatus">Connecting to operator...</div>
+
+    <div class="video-grid">
+      <div class="video-box local-video">
+        <video id="localVideo" autoplay muted></video>
+        <div class="video-label">You</div>
+      </div>
+
+      <div class="video-box remote-video">
+        <video id="remoteVideo" autoplay></video>
+        <div class="video-label">Operator</div>
+      </div>
+    </div>
+
+    <div class="video-controls">
+      <button id="toggleVideo" class="toggle-video">📹 Video On</button>
+      <button id="toggleAudio" class="toggle-audio">🎤 Audio On</button>
+      <button id="endCall" class="end-call">📞 End Call</button>
+    </div>
+  </div>
+ 
+  <!-- Model Viewer -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  
+  <!-- Main Script -->
+  <script type="module">
+    import { TalkingHead } from "talkinghead";
+
+    let head;
+    let currentMood = 'neutral';
+    const avatarContainer = document.getElementById("avatar");
+
+    async function initAvatar() {
+      // === constructor now includes lipsyncModules & lipsyncLang ===
+      head = new TalkingHead(avatarContainer, {
+        ttsEndpoint: "none",
+        lipsyncModules: ["en"],    // ← load English viseme module
+        lipsyncLang: "en",         // ← drive lip-sync in English
+        cameraView: "full"
+      });
+
+      await head.showAvatar({
+        url: 'https://models.readyplayer.me/685addbcb695ba2bdaf8c7a3.glb?morphTargets=ARKit,Oculus+Visemes,mouthOpen,mouthSmile,eyesClosed,eyesLookUp,eyesLookDown&textureSizeLimit=1024&textureFormat=png',
+        body: 'M',
+        avatarMood: 'neutral'
+      });
+      
+      // Initialize with neutral mood
+      currentMood = 'neutral';
+    }
+
+    const recordBtn = document.getElementById("recordBtn");
+    const humanBtn  = document.getElementById("humanBtn");
+    const messagesEl = document.getElementById("messages");
+
+    function addMessage(role, text) {
+      const div = document.createElement("div");
+      div.className = `message ${role}`;
+      div.textContent = text;
+      messagesEl.appendChild(div);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    // Track recording state
+    let isRecording = false;
+    let currentRecorder = null;
+    let currentWs = null;
+    
+    recordBtn.onclick = async () => {
+      if (!head) {
+        await initAvatar();
+      }
+
+      // If already recording, stop the recording
+      if (isRecording) {
+        if (currentWs && currentWs.readyState === WebSocket.OPEN) {
+          currentWs.close();
+        }
+        if (currentRecorder && currentRecorder.state === "recording") {
+          currentRecorder.stop();
+        }
+        
+        // Reset button state
+        recordBtn.textContent = "🎙️ Start";
+        isRecording = false;
+        return;
+      }
+      
+      // Set button to recording state
+      recordBtn.textContent = "⏹️ Stop";
+      isRecording = true;
+
+      // stop any playing TTS
+      if (head.currentAudio && !head.currentAudio.paused) {
+        head.currentAudio.pause();
+      }
+
+      const ws = new WebSocket(
+        `wss://6c3c-178-24-248-38.ngrok-free.app/ws/audio`
+      );
+      currentWs = ws;
+
+      ws.onmessage = async ({ data }) => {
+        const { transcript, response, audio_url, needs_human_operator } = JSON.parse(data);
+        addMessage("user", transcript);
+        addMessage("assistant", response);
+        
+        // First detect emotions in the user's message
+        detectEmotionAndChangeMood(transcript, true);
+        
+        // Then check the assistant's response, but with lower priority
+        detectEmotionAndChangeMood(response, false);
+
+        if (needs_human_operator) {
+          humanBtn.style.display = "block";
+          addMessage("system", "Please click the button below to connect with a human operator.");
+        }
+
+        const blob = await fetch(audio_url).then(r => r.blob());
+        const buffer = await blob.arrayBuffer();
+        const decoded = await head.audioCtx.decodeAudioData(buffer);
+
+        // build timed word arrays
+        const whisperResp = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+          method: "POST",
+          body: (() => {
+            const f = new FormData();
+            f.append("file", new File([blob], "tts.mp3", { type: "audio/mpeg" }));
+            f.append("model", "whisper-1");
+            f.append("language", "en");
+            f.append("response_format", "verbose_json");
+            f.append("prompt", "[The following is a full verbatim transcription without additional details, comments or emojis:]");
+            f.append("timestamp_granularities[]", "word");
+            return f;
+          })(),
+          headers: { "Authorization": "Bearer API_KEY" }
+        });
+
+        const json = await whisperResp.json();
+        const timed = {
+          audio: decoded,
+          words: [],
+          wtimes: [],
+          wdurations: [],
+          markers: [],
+          mtimes: []
+        };
+
+        json.words.forEach(w => {
+          timed.words.push(w.word);
+          // convert seconds→ms and offset a bit for early mouth opening
+          timed.wtimes.push(w.start * 1000 - 150);
+          timed.wdurations.push((w.end - w.start) * 1000);
+        });
+
+        head.speakAudio(timed);
+      };
+      
+      ws.onclose = () => {
+        // Reset button state if WebSocket closes
+        if (isRecording) {
+          recordBtn.textContent = "🎙️ Start";
+          isRecording = false;
+        }
+      };
+
+      // start streaming mic
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+          currentRecorder = recorder;
+          
+          recorder.ondataavailable = e => {
+            if (ws.readyState === WebSocket.OPEN) ws.send(e.data);
+          };
+          
+          recorder.start(250);
+          
+          recorder.onstop = () => {
+            // Clean up the stream tracks when recording stops
+            stream.getTracks().forEach(track => track.stop());
+          };
+          
+          ws.onclose = () => {
+            if (recorder.state === "recording") {
+              recorder.stop();
+            }
+          };
+        })
+        .catch(err => {
+          console.error("Mic error:", err);
+          // Reset button state on error
+          recordBtn.textContent = "🎙️ Start";
+          isRecording = false;
+        });
+    };
+
+    function detectSilence(threshold = 0.01, timeout = 1500) {
+      const data = new Uint8Array(analyserInput.fftSize);
+      let lastActivity = Date.now();
+      (function loop(){
+        analyserInput.getByteTimeDomainData(data);
+        const silent = data.every(v=>Math.abs(v-128) < threshold*128);
+        if (!silent) lastActivity = Date.now();
+        if (Date.now() - lastActivity > timeout && mediaRecorder.state==="recording") {
+          mediaRecorder.stop();
+        } else {
+          requestAnimationFrame(loop);
+        }
+      })();
+    }
+
+    function showLoading(loading) {
+      if (loading) {
+        recordBtn.disabled = true;
+        recordBtn.innerHTML = `Listening... <span class="spinner"></span>`;
+      } else {
+        recordBtn.disabled = false;
+        recordBtn.textContent = "🎙️ Start";
+      }
+    }
+
+    // ====== RTC BUTTONS & ELEMENTS ======
+    const videoContainer    = document.getElementById("videoContainer");
+    const connectionStatus  = document.getElementById("connectionStatus");
+    const localVideo        = document.getElementById("localVideo");
+    const remoteVideo       = document.getElementById("remoteVideo");
+    const toggleVideoBtn    = document.getElementById("toggleVideo");
+    const toggleAudioBtn    = document.getElementById("toggleAudio");
+    const endCallBtn        = document.getElementById("endCall");
+
+    // ====== UTILS ======
+    function generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+        .replace(/[xy]/g, c => (Math.random()*16|0).toString(16));
+    }
+
+    // ====== HUMAN BUTTON ======
+    humanBtn.onclick = initializeVideoCall;
+
+    // ====== WEBRTC STATE ======
+    let localStream, peerConnection, signalingSocket;
+    const clientId = generateUUID();
+    let isVideoEnabled = true, isAudioEnabled = true;
+
+    // ====== INITIALIZE VIDEO CALL ======
+    async function initializeVideoCall() {
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true });
+        localVideo.srcObject = localStream;
+        videoContainer.classList.add('active');
+        setupPeerConnection();
+        connectToSignalingServer();
+        addMessage("system", "Connecting you to a human operator...");
+      } catch (err) {
+        console.error(err);
+        addMessage("system", "Unable to access camera/microphone.");
+      }
+    }
+
+    // ====== PEER CONNECTION ======
+    function setupPeerConnection() {
+      peerConnection = new RTCPeerConnection({
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+          { urls: 'stun:stun2.l.google.com:19302' }
+        ]
+      });
+      localStream.getTracks().forEach(track =>
+        peerConnection.addTrack(track, localStream)
+      );
+      peerConnection.ontrack = e => {
+        remoteVideo.srcObject = e.streams[0];
+        connectionStatus.textContent = "Connected to operator";
+        connectionStatus.className = "connection-status connected";
+      };
+      peerConnection.onicecandidate = e => {
+        if (e.candidate && signalingSocket.readyState===WebSocket.OPEN) {
+          signalingSocket.send(JSON.stringify({ type:'ice-candidate', candidate:e.candidate }));
+        }
+      };
+      peerConnection.onconnectionstatechange = () => {
+        const s = peerConnection.connectionState;
+        if (s==='disconnected' || s==='failed') {
+          connectionStatus.textContent = "Connection lost";
+          connectionStatus.className = "connection-status disconnected";
+          setTimeout(endVideoCall,2000);
+        }
+      };
+    }
+
+    // ====== SIGNALING ======
+    function connectToSignalingServer() {
+      const WS_BASE = window.location.protocol==='https:'?'wss:':'ws:';
+      signalingSocket = new WebSocket(`wss://6c3c-178-24-248-38.ngrok-free.app/ws/signaling/${clientId}/customer`);
+      signalingSocket.onopen = () => {
+        connectionStatus.textContent = "Waiting for operator...";
+        connectionStatus.className = "connection-status connecting";
+      };
+      signalingSocket.onmessage = async ({data}) => {
+        const msg = JSON.parse(data);
+        switch(msg.type) {
+          case 'matched':
+            connectionStatus.textContent = "Operator found! Establishing connection...";
+            const offer = await peerConnection.createOffer({ offerToReceiveAudio:true, offerToReceiveVideo:true });
+            await peerConnection.setLocalDescription(offer);
+            signalingSocket.send(JSON.stringify({ type:'offer', offer }));
+            break;
+          case 'answer':
+            await peerConnection.setRemoteDescription(msg.answer);
+            break;
+          case 'ice-candidate':
+            await peerConnection.addIceCandidate(msg.candidate);
+            break;
+          case 'partner_disconnected':
+            connectionStatus.textContent = "Operator disconnected";
+            connectionStatus.className = "connection-status disconnected";
+            setTimeout(endVideoCall,2000);
+            break;
+        }
+      };
+      signalingSocket.onerror = e => {
+        console.error(e);
+        connectionStatus.textContent = "Connection error";
+        connectionStatus.className = "connection-status disconnected";
+      };
+      signalingSocket.onclose = () => {
+        if (videoContainer.classList.contains('active')) {
+          connectionStatus.textContent = "Connection lost";
+          connectionStatus.className = "connection-status disconnected";
+        }
+      };
+    }
+
+    // ====== VIDEO CONTROLS ======
+    toggleVideoBtn.onclick = () => {
+      isVideoEnabled = !isVideoEnabled;
+      localStream.getVideoTracks().forEach(t=>t.enabled=isVideoEnabled);
+      toggleVideoBtn.textContent = isVideoEnabled?"📹 Video On":"📹 Video Off";
+    };
+    toggleAudioBtn.onclick = () => {
+      isAudioEnabled = !isAudioEnabled;
+      localStream.getAudioTracks().forEach(t=>t.enabled=isAudioEnabled);
+      toggleAudioBtn.textContent = isAudioEnabled?"🎤 Audio On":"🎤 Audio Off";
+    };
+    
+    endCallBtn.onclick = endVideoCall;
+
+    function endVideoCall() {
+      if (peerConnection) { peerConnection.close(); peerConnection=null; }
+      if (signalingSocket && signalingSocket.readyState===WebSocket.OPEN) {
+        signalingSocket.send(JSON.stringify({type:'disconnect'}));
+        signalingSocket.close();
+      }
+      if (localStream) {
+        localStream.getTracks().forEach(t=>t.stop());
+        localStream=null;
+      }
+      videoContainer.classList.remove('active');
+      humanBtn.style.display = "none";
+      addMessage("system", "Video call ended. You can continue chatting.");
+    }
+
+    // ====== EMOTION DETECTION AND MOOD CHANGE ======
+    let emotionResetTimer;
+    const EMOTION_TIMEOUT = 5000; // Time in ms before returning to neutral (5 seconds)
+    
+    // Track if the message is from user or assistant
+    let lastUserEmotion = 'neutral';
+    
+    function detectEmotionAndChangeMood(text, isUserMessage = false) {
+      // Convert to lowercase for easier matching
+      const lowerText = text.toLowerCase();
+      
+      // Define emotion keywords - carefully categorized with priority words
+      const emotionKeywords = {
+        happy: ['happy', 'joy', 'excited', 'great', 'wonderful', 'fantastic', 'amazing', 'delighted', 'pleased', 'glad', 'smile', 'laugh', 'cheerful', 'thrilled', 'excellent', 'good', 'positive', '😊', '😃', '😄', '🙂', '😁'],
+        sad: ['sad', 'unhappy', 'disappointed', 'regret', 'unfortunate', 'depressed', 'gloomy', 'miserable', 'heartbroken', 'cry', 'tears', 'sorrow', 'grief', 'despair', 'melancholy', 'blue', '😢', '😭', '😔', '☹️', '😞'],
+        angry: ['angry', 'annoyed', 'frustrated', 'mad', 'furious', 'irritated', 'outraged', 'rage', 'hostile', 'agitated', 'irate', 'temper', 'enraged', 'livid', 'indignant', 'infuriated', 'upset', '😠', '😡', '🤬', '😤']
+      };
+      
+      // Special handling for assistant responses
+      if (!isUserMessage) {
+        // Ignore "sorry" in assistant responses as it's often just being polite
+        if (lowerText.includes('sorry') && lastUserEmotion !== 'neutral') {
+          console.log("Ignoring 'sorry' in assistant response, keeping user emotion: " + lastUserEmotion);
+          return; // Keep the current emotion
+        }
+      }
+      
+      // Priority words that should take precedence in detection
+      const priorityWords = {
+        happy: ['happy', 'joy', 'excited', 'glad'],
+        sad: ['sad', 'unhappy', 'depressed'],
+        angry: ['angry', 'annoyed', 'frustrated', 'mad', 'furious']
+      };
+      
+      // Check for emotion keywords with improved detection
+      let detectedEmotion = 'neutral';
+      let maxCount = 0;
+      
+      // First check for priority words - these take precedence
+      for (const [emotion, keywords] of Object.entries(priorityWords)) {
+        for (const keyword of keywords) {
+          // Create a regex that looks for the word with boundaries
+          const regex = new RegExp(`\\b${keyword}\\b`, 'i');
+          if (regex.test(lowerText)) {
+            console.log(`Priority word detected: ${keyword} -> ${emotion}`);
+            
+            // If this is a user message, store their emotion
+            if (isUserMessage) {
+              lastUserEmotion = emotion;
+              console.log(`User expressed emotion: ${emotion}`);
+            }
+            
+            return changeMood(emotion); // Immediately change mood if priority word found
+          }
+        }
+      }
+      
+      // If no priority words, do regular detection
+      for (const [emotion, keywords] of Object.entries(emotionKeywords)) {
+        // Count exact word matches (with word boundaries)
+        const wordMatches = keywords.filter(keyword => {
+          // Skip emoji in this check
+          if (keyword.length === 2 && keyword.charCodeAt(0) > 127) return false;
+          
+          // Create a regex that looks for the word with boundaries
+          const regex = new RegExp(`\\b${keyword}\\b`, 'i');
+          return regex.test(lowerText);
+        }).length * 2; // Give more weight to exact matches
+        
+        // Count substring matches (including emoji)
+        const substringMatches = keywords.filter(keyword => lowerText.includes(keyword)).length;
+        
+        const totalScore = wordMatches + substringMatches;
+        console.log(`Emotion score for ${emotion}: ${totalScore}`);
+        
+        if (totalScore > maxCount) {
+          maxCount = totalScore;
+          detectedEmotion = emotion;
+        }
+      }
+      
+      // Only change mood if emotion is detected
+      if (maxCount > 0 && detectedEmotion !== currentMood) {
+        changeMood(detectedEmotion);
+      }
+    }
+    
+    function changeMood(mood) {
+      if (!head || currentMood === mood) return;
+      
+      // Clear any existing timer
+      if (emotionResetTimer) {
+        clearTimeout(emotionResetTimer);
+      }
+      
+      // Update the avatar's mood
+      head.setMood(mood);
+      currentMood = mood;
+      
+      console.log(`Avatar mood changed to: ${mood}`);
+      
+      // Don't show system messages for mood changes
+      
+      // Set timer to return to neutral after timeout
+      if (mood !== 'neutral') {
+        emotionResetTimer = setTimeout(() => {
+          head.setMood('neutral');
+          currentMood = 'neutral';
+          console.log('Avatar mood reset to neutral');
+        }, EMOTION_TIMEOUT);
+      }
+    }
+
+    // ====== CLEANUP ON UNLOAD ======
+    window.addEventListener('beforeunload', () => {
+      if (peerConnection||signalingSocket) endVideoCall();
+    });
+
+    initAvatar(); 
+    
+  </script>
+</body>
+</html>
