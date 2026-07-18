@@ -83,8 +83,6 @@ The goal was to create a customer support assistant capable of answering common 
 | FastAPI | API development |
 | WebSocket | Real-time communication |
 | HTML5 | Frontend |
-| CSS3 | User Interface |
-| JavaScript | Client-side functionality |
 | Deepgram | Speech-to-Text & Text-to-Speech |
 | OpenAI API | AI response generation |
 | FAISS | Vector similarity search |
@@ -156,21 +154,16 @@ Swisscom-AI-Chatbot
 ├── backend/
 ├── frontend/
 ├── data/
-├── embeddings/
-├── faiss_index/
+├── utils/
+├── vectorstore/
 ├── static/
 ├── avatar/
 ├── requirements.txt
 └── README.md
-```
-
-*(Folder names may differ depending on your local project structure.)*
-
----
 
 # 🎥 Demo
 
-A demonstration video of the chatbot will be added here.
+A demonstration video of the chatbot.
 
 > 📹 **Demo Video:** *(Coming Soon)*
 
@@ -179,12 +172,6 @@ You can later replace this section with:
 ```markdown
 ## 🎥 Demo
 
-https://github.com/user-attachments/assets/xxxxxxxx
-```
-
-or embed a GIF showing the chatbot in action.
-
----
 
 # 💻 My Contribution
 
