@@ -1,4 +1,4 @@
-# 🤖 Swisscom AI Chatbot
+### Swisscom AI Chatbot
 
 > An AI-powered multimodal customer support chatbot developed in collaboration with **Swisscom** as part of the **B.Sc. Artificial Intelligence** curriculum.
 
