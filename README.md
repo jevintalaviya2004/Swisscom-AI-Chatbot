@@ -22,8 +22,6 @@ Unlike traditional chatbots, this system provides a more human-like interaction 
 
 The goal was to create a customer support assistant capable of answering common questions about Swisscom's products and services while providing a natural conversational experience.
 
----
-
 # ✨ Features
 
 - Speech-to-Text conversation
@@ -38,11 +36,8 @@ The goal was to create a customer support assistant capable of answering common 
 - Context-aware AI responses
 - Modern web interface
 
----
-
 # 🏗️ Project Architecture
 
-```
                 User
                   │
                   ▼
@@ -74,6 +69,8 @@ The goal was to create a customer support assistant capable of answering common 
                   ▼
            🔊 Voice Output
 
+---
+
 # 🚀 Technologies Used
 
 | Technology | Purpose |
@@ -104,7 +101,6 @@ The chatbot follows a Retrieval-Augmented Generation (RAG) workflow.
 7. The response is converted back into speech using **Deepgram**.
 8. The avatar displays an appropriate facial emotion while speaking.
 
----
 
 # 😊 Interactive Avatar
 
@@ -144,7 +140,6 @@ After comparing multiple solutions, **Deepgram** was selected because it offered
 
 This iterative process allowed the chatbot to become faster, more responsive, and better suited for real-world customer interactions.
 
----
 
 # 📂 Project Structure
 
@@ -160,6 +155,7 @@ Swisscom-AI-Chatbot
 ├── avatar/
 ├── requirements.txt
 └── README.md
+---
 
 # 💻 My Contribution
 
@@ -188,13 +184,11 @@ Potential future enhancements include:
 - Mobile compatibility
 - Long-term conversation memory
 
----
 
 # 📜 License
 
 This project was developed for educational purposes as part of the **B.Sc. Artificial Intelligence** program in collaboration with **Swisscom**.
 
----
 
 # ⭐ Acknowledgements
 
@@ -209,6 +203,5 @@ The project offered an excellent opportunity to gain hands-on experience in:
 - Real-time Web Communication
 - Human-Computer Interaction
 
----
 
 ## 🌟 If you found this project interesting, consider giving it a ⭐ on GitHub!
