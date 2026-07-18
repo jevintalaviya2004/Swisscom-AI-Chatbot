@@ -37,6 +37,7 @@ The goal was to create a customer support assistant capable of answering common 
 - Modern web interface
 
 # 🏗️ Project Architecture
+```
 
                 User
                   │
@@ -69,9 +70,10 @@ The goal was to create a customer support assistant capable of answering common 
                   ▼
            🔊 Voice Output
 
----
+```
 
 # 🚀 Technologies Used
+```
 
 | Technology | Purpose |
 |------------|---------|
@@ -86,7 +88,7 @@ The goal was to create a customer support assistant capable of answering common 
 | RAG | Knowledge retrieval |
 | WebRTC | Customer care connection |
 
----
+```
 
 # 🧠 AI Pipeline
 
@@ -155,7 +157,7 @@ Swisscom-AI-Chatbot
 ├── avatar/
 ├── requirements.txt
 └── README.md
----
+```
 
 # 💻 My Contribution
 
