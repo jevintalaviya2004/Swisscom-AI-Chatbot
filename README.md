@@ -160,8 +160,7 @@ Swisscom-AI-Chatbot
 
 # 🎥 Demo
 
-A demonstration video of the chatbot.
-
+A demonstration video of the chatbot
 
 # 💻 My Contribution
 
@@ -182,14 +181,14 @@ Responsibilities included:
 
 Potential future enhancements include:
 
-- 🌍 Multi-language support
-- 🗣️ Voice customization
-- 😊 Advanced emotion recognition
-- 👤 User authentication
-- 📊 Conversation analytics dashboard
-- ☁️ Cloud deployment
-- 📱 Mobile compatibility
-- 🧠 Long-term conversation memory
+- Multi-language support
+- Voice customization
+- Advanced emotion recognition
+- User authentication
+- Conversation analytics dashboard
+- Cloud deployment
+- Mobile compatibility
+- Long-term conversation memory
 
 ---
 
