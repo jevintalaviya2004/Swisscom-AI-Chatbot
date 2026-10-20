@@ -9,3 +9,6 @@ __pycache__/
 
 # Audios
 audio/
+
+# Secrets / local tunnel config
+ngrok.yml
